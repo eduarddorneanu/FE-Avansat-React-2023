@@ -8,14 +8,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsAuthenticated } from "../store/auth.reducer";
+import { useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
-const LoginPage = () => {
-  const dispatch = useDispatch();
+const RegisterPage = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -28,10 +26,14 @@ const LoginPage = () => {
     return <Navigate to="/" />;
   }
 
-  const onLogin = async () => {
+  const onRegister = async () => {
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      navigate("/login");
     } catch (error) {
       console.error(error.message);
       setError(error.message);
@@ -47,7 +49,7 @@ const LoginPage = () => {
         boxShadow="2"
         borderRadius="lg"
       >
-        <Heading>Login</Heading>
+        <Heading>Register</Heading>
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input
@@ -79,18 +81,18 @@ const LoginPage = () => {
         <Text
           color="blue"
           onClick={() => {
-            navigate("/register");
+            navigate("/login");
           }}
         >
-          Do you need an account?
+          Do you have an account?
         </Text>
 
-        <Button mt="5" onClick={onLogin}>
-          Log in
+        <Button mt="5" onClick={onRegister}>
+          Register
         </Button>
       </Center>
     </Center>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
