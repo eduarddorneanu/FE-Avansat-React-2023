@@ -8,17 +8,19 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsAuthenticated } from "../store/auth.reducer";
 import { Navigate, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
-const LoginPage = () => {
+const RegisterPage = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
+  const [registerError, setRegisterError] = useState("");
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
@@ -26,12 +28,13 @@ const LoginPage = () => {
     return <Navigate to="/" />;
   }
 
-  const onLogin = async () => {
+  const onRegister = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/login");
     } catch (error) {
       console.error(error);
-      setLoginError(error.message);
+      setRegisterError(error.message);
     }
   };
 
@@ -44,7 +47,7 @@ const LoginPage = () => {
         boxShadow="2"
         borderRadius="lg"
       >
-        <Heading>Login</Heading>
+        <Heading>Register</Heading>
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input
@@ -69,23 +72,23 @@ const LoginPage = () => {
           />
         </FormControl>
 
-        {loginError && <Text color="red">{loginError}</Text>}
+        {registerError && <Text color="red">{registerError}</Text>}
 
         <Text
           color="blue"
           onClick={() => {
-            navigate("/register");
+            navigate("/login");
           }}
         >
-          Do you need an account?
+          Do you have an account?
         </Text>
 
-        <Button mt="5" onClick={onLogin}>
-          Log in
+        <Button mt="5" onClick={onRegister}>
+          Register
         </Button>
       </Center>
     </Center>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

@@ -3,6 +3,8 @@ import { Box, HStack, Text } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/auth.reducer";
+import { signOut } from "firebase/auth";
+import { auth } from "../lib/firebase";
 
 const Navbar = () => {
   const homeMatch = useMatch("/");
@@ -46,8 +48,7 @@ const Navbar = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            dispatch(logout());
-            localStorage.removeItem("authToken");
+            signOut(auth);
           }}
         />
       </HStack>
